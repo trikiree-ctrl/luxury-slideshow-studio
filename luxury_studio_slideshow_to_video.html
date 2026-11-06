@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Luxury Studio - Smart Slideshow to Video Converter</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 20px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+* { -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: radial-gradient(circle at 15% 15%, #0f172a 0%, #020617 100%);
+  color: #f8fafc;
+  min-height: 100dvh;
+  padding-top: var(--sat);
+  padding-bottom: calc(var(--sab) + 1.5rem);
+}
+.font-luxury { font-family: 'Playfair Display', serif; }
+.font-num { font-family: 'Chakra Petch', sans-serif; }
+.glass-panel {
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5);
+}
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gold-border {
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.luxury-btn {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #b45309 100%);
+  box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.35);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.luxury-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.5);
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+</head>
+<body class="flex flex-col min-h-full">
+
+<!-- Top Navigation Bar -->
+<header class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-3 pb-2">
+  <div class="glass-panel p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 gold-border">
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-amber-500/20">
+        ✨
+      </div>
+      <div>
+        <h1 class="text-xl sm:text-2xl font-black font-luxury tracking-wide gold-gradient-text">
+          Luxury Studio Slideshow
+        </h1>
+        <p class="text-xs text-amber-200/70 font-medium">เปลี่ยนภาพถ่ายเป็นวิดีโอสไลด์โชว์พรีเมียม & ดาวน์โหลดเป็น MP4/Video ทันที</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        โหมดบันทึกวิดีโอออฟไลน์ 100%
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- Main Workspace -->
+<main class="max-w-7xl mx-auto w-full px-4 sm:px-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 mt-3">
+
+  <!-- Left Control Panel (Options & Upload) -->
+  <div class="lg:col-span-5 space-y-5">
+    
+    <!-- Step 1: Upload Files -->
+    <div class="glass-panel p-5 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs border border-amber-500/40">1</span>
+          <h2 class="text-sm font-bold tracking-wide uppercase text-slate-200">อัปโหลดภาพถ่ายกิจกรรม / สื่อ</h2>
+        </div>
+        <span id="photoCountBadge" class="text-xs font-bold text-amber-400 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30">0 ภาพ</span>
+      </div>
+
+      <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-amber-500/30 hover:border-amber-400/80 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all hover:bg-white/[0.02] flex flex-col items-center justify-center gap-2">
+        <div class="w-14 h-14 rounded-full bg-amber-500/10 flex items-center justify-center text-2xl text-amber-300">
+          🖼️
+        </div>
+        <p class="text-sm font-bold text-slate-200 mt-1">แตะหรือลากไฟล์ภาพมาวางที่นี่</p>
+        <p class="text-xs text-slate-400">รองรับ JPG, PNG, WEBP หลายภาพพร้อมกัน</p>
+        <button type="button" class="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 border border-amber-500/30">
+          เลือกไฟล์จากเครื่อง
+        </button>
+        <input type="file" id="fileInput" multiple accept="image/*" class="hidden" onchange="App.handleFileSelect(this.files)">
+      </div>
+
+      <!-- Thumbnails Reorder Container -->
+      <div id="thumbnailsContainer" class="hidden space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>ลำดับภาพ (ลากหรือแตะลบได้):</span>
+          <button onclick="App.clearAllPhotos()" class="text-rose-400 hover:text-rose-300 transition">ล้างทั้งหมด</button>
+        </div>
+        <div id="thumbnailsList" class="flex gap-2 overflow-x-auto pb-2 no-scrollbar"></div>
+      </div>
+    </div>
+
+    <!-- Step 2: Atmospheric & Motion Settings -->
+    <div class="glass-panel p-5 sm:p-6 space-y-4">
+      <div class="flex items-center gap-2 border-b border-white/10 pb-3">
+        <span class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs border border-amber-500/40">2</span>
+        <h2 class="text-sm font-bold tracking-wide uppercase text-slate-200">สไตล์ความหรูหรา & เอฟเฟกต์</h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">ระยะเวลาต่อภาพ</label>
+          <select id="cfgDuration" class="w-full bg-slate-900 border border-white/15 rounded-xl p-2.5 text-slate-200 outline-none focus:border-amber-400 font-bold">
+            <option value="3000">3.0 วินาที</option>
+            <option value="4000" selected>4.0 วินาที (แนะนำ)</option>
+            <option value="5000">5.0 วินาที</option>
+            <option value="6000">6.0 วินาที (สไตล์งานแต่ง)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">ขนาดวิดีโอ (Aspect Ratio)</label>
+          <select id="cfgRatio" onchange="App.updateCanvasResolution()" class="w-full bg-slate-900 border border-white/15 rounded-xl p-2.5 text-slate-200 outline-none focus:border-amber-400 font-bold">
+            <option value="16:9" selected>แนวนอน 16:9 (1920x1080 FHD)</option>
+            <option value="9:16">แนวตั้ง 9:16 (Reels/TikTok 1080x1920)</option>
+            <option value="1:1">จัตุรัส 1:1 (1080x1080)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">บรรยากาศคลุมหน้าภาพ (Atmosphere Overlay)</label>
+          <select id="cfgAtmosphere" class="w-full bg-slate-900 border border-white/15 rounded-xl p-2.5 text-slate-200 outline-none focus:border-amber-400 font-bold">
+            <option value="mist">🌫️ ไอหมอกฤดูหนาว (Winter Fog / Mist)</option>
+            <option value="stardust" selected>✨ ประกายละอองทองคำ (Luxury Golden Stardust)</option>
+            <option value="snow">❄️ ปุยหิมะโรแมนติก (Romantic Snow)</option>
+            <option value="cinema">🎞️ แสงเรโทรภาพยนตร์ (Vintage Light Leak)</option>
+            <option value="none">🚫 ไม่ใส่บรรยากาศ</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">แอนิเมชันการเคลื่อนไหว (Cinematic Motion)</label>
+          <select id="cfgMotion" class="w-full bg-slate-900 border border-white/15 rounded-xl p-2.5 text-slate-200 outline-none focus:border-amber-400 font-bold">
+            <option value="random" selected>🎲 สุ่มสลับ 20+ สไตล์ (Ken Burns, Pan, Zoom, Tilt)</option>
+            <option value="zoomIn">🔍 ซูมเข้าอย่างนุ่มนวล (Soft Zoom In)</option>
+            <option value="zoomOut">🔭 ซูมออกเปิดมุมมอง (Soft Zoom Out)</option>
+            <option value="panRight">➡️ แพนภาพไปทางขวา (Cinematic Pan Right)</option>
+            <option value="static">⏸️ ภาพนิ่งธรรมดา (No Motion)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Background Music Selection -->
+      <div class="pt-2 border-t border-white/10 space-y-2 text-xs">
+        <label class="block font-bold text-slate-300">🎵 ใส่เพลงบรรเลงประกอบวิดีโอ (ไฟล์เสียง MP3 / AAC / WAV)</label>
+        <div class="flex gap-2">
+          <input type="file" id="audioInput" accept="audio/*" class="hidden" onchange="App.handleAudioSelect(this.files)">
+          <button type="button" onclick="document.getElementById('audioInput').click()" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 border border-white/15 rounded-xl font-bold text-slate-300 transition flex items-center justify-center gap-1.5 truncate">
+            <span id="audioFileName">เลือกเพลงจากอุปกรณ์...</span>
+          </button>
+          <button type="button" onclick="App.removeAudio()" id="removeAudioBtn" class="hidden px-3 py-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 rounded-xl border border-rose-500/30">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Display Panel (Live Canvas & Renderer) -->
+  <div class="lg:col-span-7 flex flex-col space-y-4">
+    
+    <!-- Video Monitor Canvas Container -->
+    <div class="glass-panel p-4 sm:p-6 flex-1 flex flex-col items-center justify-center relative overflow-hidden min-h-[380px] sm:min-h-[460px]">
+      
+      <!-- Top Monitor Status Bar -->
+      <div class="absolute top-4 inset-x-6 flex items-center justify-between text-xs font-bold text-slate-400 z-10 pointer-events-none">
+        <span class="flex items-center gap-1.5 bg-slate-950/70 px-3 py-1 rounded-full backdrop-blur border border-white/10">
+          <span id="liveIndicator" class="w-2 h-2 rounded-full bg-slate-500"></span>
+          <span id="monitorStatusText">เตรียมพร้อมภาพนิ่ง</span>
+        </span>
+        <span id="timerBadge" class="font-num bg-slate-950/70 px-3 py-1 rounded-full backdrop-blur border border-white/10 text-amber-400">
+          00:00 / 00:00
+        </span>
+      </div>
+
+      <!-- Main Render Canvas -->
+      <div class="relative w-full h-full flex items-center justify-center">
+        <canvas id="stageCanvas" class="max-w-full max-h-[58dvh] object-contain rounded-2xl shadow-2xl border border-white/10 bg-black"></canvas>
+      </div>
+
+      <!-- Rendering Overlay Progress Modal -->
+      <div id="renderProgressOverlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-xl z-30 hidden flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-full border-4 border-amber-500 border-t-transparent animate-spin mb-4"></div>
+        <h3 class="text-lg font-black text-amber-400">กำลังเรนเดอร์และประมวลผลวิดีโอ</h3>
+        <p id="renderDetailText" class="text-xs text-slate-300 mt-1 max-w-sm">โปรดอย่าเพิ่งปิดหน้าต่าง ระบบกำลังบันทึกภาพทีละเฟรมพร้อมเพลง...</p>
+        <div class="w-full max-w-xs bg-slate-800 rounded-full h-2 mt-4 overflow-hidden border border-white/10">
+          <div id="renderProgressBar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 w-0 transition-all duration-150"></div>
+        </div>
+        <span id="renderPercentText" class="text-xs font-num font-bold text-amber-300 mt-2">0%</span>
+      </div>
+    </div>
+
+    <!-- Action Toolbar (Preview & Export Buttons) -->
+    <div class="glass-panel p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button id="btnPlayPreview" onclick="App.togglePreview()" class="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/10 transition">
+          <span id="playIcon">▶</span>
+          <span id="playText">ชมพรีวิวสด</span>
+        </button>
+        <button onclick="App.resetPreview()" class="px-4 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs border border-white/10 transition">
+          ↺ เริ่มใหม่
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button id="btnExportVideo" onclick="App.startExportRecording()" class="luxury-btn w-full sm:w-auto px-7 py-3 rounded-2xl text-slate-950 font-black text-xs flex items-center justify-center gap-2 tracking-wide uppercase">
+          <span>🎬</span>
+          <span>สร้าง & ดาวน์โหลดวิดีโอ (.mp4)</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+/**
+ * Luxury Studio Application Logic
+ * Canvas 2D Engine with Ken Burns Matrix, Particle Overlays, and MediaRecorder Video Export
+ */
+const App = {
+  photos: [],
+  audioBuffer: null,
+  audioElement: null,
+  audioContext: null,
+  currentSlideIndex: 0,
+  isPlaying: false,
+  isRecording: false,
+  animationFrameId: null,
+  slideStartTime: 0,
+  slideDuration: 4000,
+  transitionDuration: 1000,
+  mediaRecorder: null,
+  recordedChunks: [],
+  particles: [],
+  resolution: { width: 1920, height: 1080 },
+
+  init: function() {
+    this.canvas = document.getElementById('stageCanvas');
+    this.ctx = this.canvas.getContext('2d', { alpha: false });
+    this.updateCanvasResolution();
+    this.initParticles();
+    this.drawEmptyPlaceholder();
+  },
+
+  updateCanvasResolution: function() {
+    const val = document.getElementById('cfgRatio').value;
+    if (val === '16:9') {
+      this.resolution = { width: 1920, height: 1080 };
+    } else if (val === '9:16') {
+      this.resolution = { width: 1080, height: 1920 };
+    } else {
+      this.resolution = { width: 1080, height: 1080 };
+    }
+    this.canvas.width = this.resolution.width;
+    this.canvas.height = this.resolution.height;
+    if (!this.isPlaying && this.photos.length > 0) {
+      this.renderStaticSlide(this.photos[0].img);
+    } else if (!this.isPlaying) {
+      this.drawEmptyPlaceholder();
+    }
+  },
+
+  drawEmptyPlaceholder: function() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    this.ctx.fillStyle = "#090d16";
+    this.ctx.fillRect(0, 0, w, h);
+    
+    // Draw Elegant Gold Frame
+    this.ctx.strokeStyle = "rgba(245, 158, 11, 0.2)";
+    this.ctx.lineWidth = 10;
+    this.ctx.strokeRect(30, 30, w - 60, h - 60);
+
+    this.ctx.fillStyle = "#fef08a";
+    this.ctx.font = "bold 44px 'Sarabun', sans-serif";
+    this.ctx.textAlign = "center";
+    this.ctx.fillText("Luxury Studio Slideshow", w / 2, h / 2 - 20);
+
+    this.ctx.fillStyle = "#94a3b8";
+    this.ctx.font = "26px 'Sarabun', sans-serif";
+    this.ctx.fillText("กรุณาอัปโหลดภาพถ่ายเพื่อเริ่มต้นสร้างสไลด์โชว์", w / 2, h / 2 + 35);
+  },
+
+  handleFileSelect: function(files) {
+    if (!files || !files.length) return;
+    const fileList = Array.from(files);
+    let loaded = 0;
+
+    fileList.forEach(file => {
+      if (file.type.indexOf('image/') !== 0) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          this.photos.push({
+            id: 'ph_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            name: file.name,
+            img: img,
+            src: e.target.result,
+            motionStyle: this.getRandomMotion()
+          });
+          loaded++;
+          if (loaded === fileList.length) {
+            this.updateThumbnailsUI();
+            this.updateBadge();
+            if (!this.isPlaying) {
+              this.currentSlideIndex = 0;
+              this.renderStaticSlide(this.photos[0].img);
+            }
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
+  handleAudioSelect: function(files) {
+    if (!files || !files.length) return;
+    const file = files[0];
+    document.getElementById('audioFileName').innerText = '🎵 ' + file.name;
+    document.getElementById('removeAudioBtn').classList.remove('hidden');
+
+    if (!this.audioElement) {
+      this.audioElement = new Audio();
+    }
+    this.audioElement.src = URL.createObjectURL(file);
+    this.audioElement.loop = true;
+  },
+
+  removeAudio: function() {
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.audioElement.src = "";
+    }
+    document.getElementById('audioFileName').innerText = "เลือกเพลงจากอุปกรณ์...";
+    document.getElementById('removeAudioBtn').classList.add('hidden');
+    document.getElementById('audioInput').value = "";
+  },
+
+  getRandomMotion: function() {
+    const list = ['zoomIn', 'zoomOut', 'panRight', 'panLeft', 'tilt'];
+    return list[Math.floor(Math.random() * list.length)];
+  },
+
+  updateBadge: function() {
+    document.getElementById('photoCountBadge').innerText = this.photos.length + ' ภาพ';
+  },
+
+  updateThumbnailsUI: function() {
+    const container = document.getElementById('thumbnailsContainer');
+    const list = document.getElementById('thumbnailsList');
+    if (this.photos.length === 0) {
+      container.classList.add('hidden');
+      list.innerHTML = "";
+      return;
+    }
+    container.classList.remove('hidden');
+    list.innerHTML = this.photos.map((p, idx) => `
+      <div class="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/20 group">
+        <img src="${p.src}" class="w-full h-full object-cover">
+        <span class="absolute bottom-0.5 left-1 text-[9px] font-bold text-white bg-black/60 px-1 rounded">${idx + 1}</span>
+        <button onclick="App.deletePhoto(${idx})" class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition">✕</button>
+      </div>
+    `).join('');
+  },
+
+  deletePhoto: function(index) {
+    this.photos.splice(index, 1);
+    this.updateThumbnailsUI();
+    this.updateBadge();
+    if (this.photos.length === 0) {
+      this.resetPreview();
+      this.drawEmptyPlaceholder();
+    }
+  },
+
+  clearAllPhotos: function() {
+    this.photos = [];
+    this.updateThumbnailsUI();
+    this.updateBadge();
+    this.resetPreview();
+    this.drawEmptyPlaceholder();
+  },
+
+  initParticles: function() {
+    this.particles = [];
+    for (let i = 0; i < 45; i++) {
+      this.particles.push({
+        x: Math.random() * this.resolution.width,
+        y: Math.random() * this.resolution.height,
+        r: Math.random() * 50 + 20,
+        dx: Math.random() * 1.5 + 0.5,
+        dy: Math.random() * 0.8 - 0.4,
+        alpha: Math.random() * 0.4 + 0.2,
+        pulse: Math.random() * 0.01 + 0.005,
+        pDir: 1
+      });
+    }
+  },
+
+  /* Atmospheric Overlays Renderer */
+  renderAtmosphere: function() {
+    const mode = document.getElementById('cfgAtmosphere').value;
+    if (mode === 'none') return;
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    for (let i = 0; i < this.particles.length; i++) {
+      let p = this.particles[i];
+      p.alpha += p.pulse * p.pDir;
+      if (p.alpha > 0.65) p.pDir = -1;
+      if (p.alpha < 0.15) p.pDir = 1;
+
+      if (mode === 'mist') {
+        p.x += p.dx * 1.8;
+        p.y += p.dy * 0.8;
+        const grad = this.ctx.createRadialGradient(p.x, p.y, p.r * 0.1, p.x, p.y, p.r * 2.5);
+        grad.addColorStop(0, `rgba(255, 255, 255, ${p.alpha * 0.45})`);
+        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        this.ctx.fillStyle = grad;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+        this.ctx.fill();
+
+      } else if (mode === 'stardust') {
+        p.y -= p.dy * 0.6;
+        p.x += p.dx * 0.5;
+        this.ctx.fillStyle = `rgba(254, 240, 138, ${p.alpha * 0.85})`;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = 'rgba(245, 158, 11, 0.8)';
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, (p.r * 0.04) + 1.2, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.shadowBlur = 0;
+
+      } else if (mode === 'snow') {
+        p.y += p.dy * 2.5 + 2.0;
+        p.x += Math.sin(p.y * 0.02) * 1.2;
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.75})`;
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, (p.r * 0.035) + 1.5, 0, Math.PI * 2);
+        this.ctx.fill();
+
+      } else if (mode === 'cinema') {
+        // Subtle Vintage Warm Vignette
+        const grad = this.ctx.createRadialGradient(w/2, h/2, w*0.3, w/2, h/2, w*0.7);
+        grad.addColorStop(0, 'rgba(251, 191, 36, 0.02)');
+        grad.addColorStop(1, 'rgba(15, 23, 42, 0.45)');
+        this.ctx.fillStyle = grad;
+        this.ctx.fillRect(0, 0, w, h);
+        return;
+      }
+
+      if (p.x > w + 100) p.x = -100;
+      if (p.x < -100) p.x = w + 100;
+      if (p.y > h + 100) p.y = -100;
+      if (p.y < -100) p.y = h + 100;
+    }
+  },
+
+  /* Draw Single Image with Cinematic Scale & Pan Transformation */
+  drawTransformImage: function(img, progress, style, alpha = 1) {
+    if (!img) return;
+    this.ctx.save();
+    this.ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const imgRatio = img.width / img.height;
+    const canvasRatio = w / h;
+
+    let baseW, baseH;
+    if (imgRatio > canvasRatio) {
+      baseW = w;
+      baseH = w / imgRatio;
+    } else {
+      baseH = h;
+      baseW = h * imgRatio;
+    }
+
+    // Dynamic Ken Burns Zoom & Shift Factor
+    let scale = 1.0;
+    let transX = 0;
+    let transY = 0;
+
+    const motionOpt = document.getElementById('cfgMotion').value;
+    const actualStyle = motionOpt === 'random' ? style : motionOpt;
+
+    if (actualStyle === 'zoomIn') {
+      scale = 1.0 + (progress * 0.12);
+    } else if (actualStyle === 'zoomOut') {
+      scale = 1.12 - (progress * 0.12);
+    } else if (actualStyle === 'panRight') {
+      scale = 1.08;
+      transX = -w * 0.04 + (progress * w * 0.08);
+    } else if (actualStyle === 'panLeft') {
+      scale = 1.08;
+      transX = w * 0.04 - (progress * w * 0.08);
+    } else if (actualStyle === 'tilt') {
+      scale = 1.06;
+      this.ctx.translate(w / 2, h / 2);
+      this.ctx.rotate((progress - 0.5) * 0.02);
+      this.ctx.translate(-w / 2, -h / 2);
+    }
+
+    // Center Stage
+    const cx = (w - (baseW * scale)) / 2 + transX;
+    const cy = (h - (baseH * scale)) / 2 + transY;
+
+    // Soft Blurred Ambient Background for non-matching ratios
+    this.ctx.drawImage(img, 0, 0, w, h);
+    this.ctx.fillStyle = "rgba(2, 6, 23, 0.55)";
+    this.ctx.fillRect(0, 0, w, h);
+
+    // Sharp Master Foreground Photo with Luxury Drop Shadow
+    this.ctx.shadowColor = "rgba(0, 0, 0, 0.75)";
+    this.ctx.shadowBlur = 35;
+    this.ctx.drawImage(img, cx, cy, baseW * scale, baseH * scale);
+
+    this.ctx.restore();
+  },
+
+  renderStaticSlide: function(img) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawTransformImage(img, 0, 'zoomIn', 1.0);
+    this.renderAtmosphere();
+  },
+
+  togglePreview: function() {
+    if (this.photos.length === 0) {
+      Swal.fire('ยังไม่มีรูปภาพ', 'กรุณาอัปโหลดรูปภาพอย่างน้อย 1 ภาพเพื่อเล่นพรีวิว', 'info');
+      return;
+    }
+    if (this.isPlaying) {
+      this.pausePreview();
+    } else {
+      this.playPreview();
+    }
+  },
+
+  playPreview: function() {
+    this.isPlaying = true;
+    this.slideStartTime = performance.now();
+    document.getElementById('playIcon').innerText = '⏸';
+    document.getElementById('playText').innerText = 'หยุดชั่วคราว';
+    document.getElementById('liveIndicator').classList.remove('bg-slate-500');
+    document.getElementById('liveIndicator').classList.add('bg-emerald-400', 'animate-pulse');
+    document.getElementById('monitorStatusText').innerText = 'กำลังเล่นพรีวิวสด';
+
+    if (this.audioElement) {
+      this.audioElement.currentTime = 0;
+      this.audioElement.play().catch(() => {});
+    }
+
+    this.slideDuration = parseInt(document.getElementById('cfgDuration').value) || 4000;
+    this.loop();
+  },
+
+  pausePreview: function() {
+    this.isPlaying = false;
+    if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+    document.getElementById('playIcon').innerText = '▶';
+    document.getElementById('playText').innerText = 'ชมพรีวิวสด';
+    document.getElementById('liveIndicator').classList.remove('bg-emerald-400', 'animate-pulse');
+    document.getElementById('liveIndicator').classList.add('bg-slate-500');
+    document.getElementById('monitorStatusText').innerText = 'หยุดชั่วคราว';
+
+    if (this.audioElement) {
+      this.audioElement.pause();
+    }
+  },
+
+  resetPreview: function() {
+    this.pausePreview();
+    this.currentSlideIndex = 0;
+    document.getElementById('timerBadge').innerText = '00:00 / 00:00';
+    if (this.photos.length > 0) {
+      this.renderStaticSlide(this.photos[0].img);
+    } else {
+      this.drawEmptyPlaceholder();
+    }
+  },
+
+  /* Real-Time Animation Loop */
+  loop: function() {
+    if (!this.isPlaying && !this.isRecording) return;
+
+    const now = performance.now();
+    const elapsed = now - this.slideStartTime;
+    const progress = Math.min(1.0, elapsed / this.slideDuration);
+
+    const curPhoto = this.photos[this.currentSlideIndex];
+    const nextIdx = (this.currentSlideIndex + 1) % this.photos.length;
+    const nextPhoto = this.photos[nextIdx];
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Crossfade Transition Window at the end of each slide
+    const fadeStart = this.slideDuration - this.transitionDuration;
+    if (elapsed > fadeStart && this.photos.length > 1) {
+      const transProgress = (elapsed - fadeStart) / this.transitionDuration;
+      this.drawTransformImage(curPhoto.img, progress, curPhoto.motionStyle, 1.0 - transProgress);
+      this.drawTransformImage(nextPhoto.img, transProgress * 0.15, nextPhoto.motionStyle, transProgress);
+    } else {
+      this.drawTransformImage(curPhoto.img, progress, curPhoto.motionStyle, 1.0);
+    }
+
+    this.renderAtmosphere();
+
+    // Update Live Timer UI
+    const totalDuration = this.photos.length * (this.slideDuration / 1000);
+    const currentTotalSec = (this.currentSlideIndex * (this.slideDuration / 1000)) + (elapsed / 1000);
+    document.getElementById('timerBadge').innerText = `${this.formatTime(currentTotalSec)} / ${this.formatTime(totalDuration)}`;
+
+    // Slide Next Condition
+    if (elapsed >= this.slideDuration) {
+      this.currentSlideIndex++;
+      this.slideStartTime = performance.now();
+
+      // Check if finished cycle during video recording
+      if (this.isRecording && this.currentSlideIndex >= this.photos.length) {
+        this.stopExportRecording();
+        return;
+      }
+      this.currentSlideIndex = this.currentSlideIndex % this.photos.length;
+    }
+
+    this.animationFrameId = requestAnimationFrame(() => this.loop());
+  },
+
+  formatTime: function(seconds) {
+    const s = Math.floor(seconds || 0);
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(rem).padStart(2, '0')}`;
+  },
+
+  /* Video Export to MP4/WebM Engine using MediaStream Audio Mixing */
+  startExportRecording: async function() {
+    if (this.photos.length === 0) {
+      Swal.fire('ไม่มีรูปภาพ', 'กรุณาอัปโหลดรูปภาพอย่างน้อย 1 ภาพก่อนทำการเรนเดอร์', 'warning');
+      return;
+    }
+
+    this.pausePreview();
+    this.isRecording = true;
+    this.currentSlideIndex = 0;
+    this.slideDuration = parseInt(document.getElementById('cfgDuration').value) || 4000;
+    this.slideStartTime = performance.now();
+
+    // Show Progress Overlay
+    const overlay = document.getElementById('renderProgressOverlay');
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex');
+
+    // Create Canvas Capture Stream at 30 FPS
+    const canvasStream = this.canvas.captureStream(30);
+    let finalStream = canvasStream;
+
+    // Mix Audio Track if user uploaded audio
+    if (this.audioElement && this.audioElement.src) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(this.audioElement);
+        const dest = audioCtx.createMediaStreamDestination();
+        source.connect(dest);
+        source.connect(audioCtx.destination);
+        const audioTrack = dest.stream.getAudioTracks()[0];
+        if (audioTrack) {
+          finalStream = new MediaStream([
+            ...canvasStream.getVideoTracks(),
+            audioTrack
+          ]);
+        }
+        this.audioElement.currentTime = 0;
+        this.audioElement.play().catch(() => {});
+      } catch (err) {
+        console.warn('Audio mixing fallback:', err);
+      }
+    }
+
+    // Supported Codecs: MP4 (H.264 / AAC) preferred, fallback to WebM
+    let mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2';
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = 'video/mp4';
+    }
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = 'video/webm;codecs=vp9,opus';
+    }
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = 'video/webm';
+    }
+
+    this.recordedChunks = [];
+    try {
+      this.mediaRecorder = new MediaRecorder(finalStream, {
+        mimeType: mimeType,
+        videoBitsPerSecond: 6000000 // 6 Mbps High Bitrate Master Quality
+      });
+    } catch (e) {
+      this.mediaRecorder = new MediaRecorder(finalStream);
+    }
+
+    this.mediaRecorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) {
+        this.recordedChunks.push(e.data);
+      }
+    };
+
+    this.mediaRecorder.onstop = () => {
+      this.finishAndDownloadVideo(mimeType);
+    };
+
+    this.mediaRecorder.start(250);
+
+    // Track Recording Progress
+    const totalRecDuration = this.photos.length * this.slideDuration;
+    const progressInterval = setInterval(() => {
+      if (!this.isRecording) {
+        clearInterval(progressInterval);
+        return;
+      }
+      const currentPassed = (this.currentSlideIndex * this.slideDuration) + (performance.now() - this.slideStartTime);
+      const pct = Math.min(99, Math.round((currentPassed / totalRecDuration) * 100));
+      document.getElementById('renderProgressBar').style.width = pct + '%';
+      document.getElementById('renderPercentText').innerText = pct + '%';
+    }, 150);
+
+    this.loop();
+  },
+
+  stopExportRecording: function() {
+    this.isRecording = false;
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+    if (this.audioElement) {
+      this.audioElement.pause();
+    }
+  },
+
+  finishAndDownloadVideo: function(mimeType) {
+    document.getElementById('renderProgressBar').style.width = '100%';
+    document.getElementById('renderPercentText').innerText = '100%';
+
+    setTimeout(() => {
+      const overlay = document.getElementById('renderProgressOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+
+      const isMp4 = mimeType.indexOf('mp4') > -1;
+      const extension = isMp4 ? 'mp4' : 'webm';
+      const blob = new Blob(this.recordedChunks, { type: mimeType });
+      const downloadUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `Luxury_Slideshow_${Date.now()}.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'สร้างวิดีโอสำเร็จ!',
+        html: `ไฟล์วิดีโอ <b>.${extension}</b> ถูกสร้างและดาวน์โหลดลงในอุปกรณ์ของคุณเรียบร้อยแล้ว`,
+        confirmButtonColor: '#d97706',
+        confirmButtonText: 'ตกลง'
+      });
+
+      this.resetPreview();
+    }, 400);
+  }
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  App.init();
+});
+</script>
+</body>
+</html>
